@@ -10,7 +10,7 @@ import WidgetKit
 
 // MARK: - Widget Header
 struct WidgetHeader: View {
-    let config: WidgetConfiguration
+    let config: StatlyWidgetConfiguration
     let date: Date
     let compact: Bool
     
@@ -57,7 +57,7 @@ struct WidgetHeader: View {
 // MARK: - Stat Item View
 struct StatItemView: View {
     let stat: Stat
-    let config: WidgetConfiguration
+    let config: StatlyWidgetConfiguration
     let compact: Bool
     
     var body: some View {
@@ -90,7 +90,7 @@ struct StatItemView: View {
         }
     }
     
-    private func trendColor(_ direction: TrendDirection, config: WidgetConfiguration) -> Color {
+    private func trendColor(_ direction: TrendDirection, config: StatlyWidgetConfiguration) -> Color {
         switch direction {
         case .up:
             return Color(hex: config.styling.trendUpColor)
@@ -104,7 +104,7 @@ struct StatItemView: View {
 
 // MARK: - Small Widget (2x2)
 struct SmallWidgetView: View {
-    let config: WidgetConfiguration
+    let config: StatlyWidgetConfiguration
     let stats: StatsResponse
     let date: Date
     
@@ -131,7 +131,7 @@ struct SmallWidgetView: View {
 
 // MARK: - Medium Widget (4x2)
 struct MediumWidgetView: View {
-    let config: WidgetConfiguration
+    let config: StatlyWidgetConfiguration
     let stats: StatsResponse
     let date: Date
     
@@ -163,7 +163,7 @@ struct MediumWidgetView: View {
 
 // MARK: - Large Widget (4x4)
 struct LargeWidgetView: View {
-    let config: WidgetConfiguration
+    let config: StatlyWidgetConfiguration
     let stats: StatsResponse
     let date: Date
     
@@ -207,7 +207,7 @@ struct LargeWidgetView: View {
 // MARK: - Error View
 struct ErrorView: View {
     let error: String
-    let config: WidgetConfiguration?
+    let config: StatlyWidgetConfiguration?
     
     var body: some View {
         ZStack {
@@ -268,7 +268,7 @@ struct NoConfigView: View {
 // MARK: - Previews
 struct StatlyWidget_Previews: PreviewProvider {
     static var previews: some View {
-        let sampleConfig = WidgetConfiguration(
+        let sampleConfig = StatlyWidgetConfiguration(
             name: "Sample",
             endpointURL: "https://api.example.com",
             apiKey: "key",
@@ -279,7 +279,7 @@ struct StatlyWidget_Previews: PreviewProvider {
                 appName: "MenuRápido"
             )
         )
-        
+
         let sampleStats = StatsResponse(
             stats: [
                 Stat(label: "REGISTOS", value: "1", trend: "+0", trendDirection: .down),
@@ -291,37 +291,25 @@ struct StatlyWidget_Previews: PreviewProvider {
             ],
             updatedAt: "2024-01-24T09:46:00Z"
         )
-        
-        let entry = StatlyEntry(
-            date: Date(),
-            configuration: sampleConfig,
-            stats: sampleStats,
-            error: nil
-        )
-        
+
         Group {
             // Small Widget
-            StatlyWidgetEntryView(entry: entry)
+            SmallWidgetView(config: sampleConfig, stats: sampleStats, date: Date())
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("Small")
-            
+
             // Medium Widget
-            StatlyWidgetEntryView(entry: entry)
+            MediumWidgetView(config: sampleConfig, stats: sampleStats, date: Date())
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
                 .previewDisplayName("Medium")
-            
+
             // Large Widget
-            StatlyWidgetEntryView(entry: entry)
+            LargeWidgetView(config: sampleConfig, stats: sampleStats, date: Date())
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
                 .previewDisplayName("Large")
-            
+
             // Error State
-            StatlyWidgetEntryView(entry: StatlyEntry(
-                date: Date(),
-                configuration: sampleConfig,
-                stats: nil,
-                error: "Network error"
-            ))
+            ErrorView(error: "Network error", config: sampleConfig)
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
                 .previewDisplayName("Error")
         }

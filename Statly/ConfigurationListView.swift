@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ConfigurationListView: View {
-    @State private var configurations: [WidgetConfiguration] = []
+    @State private var configurations: [StatlyWidgetConfiguration] = []
     @State private var showingAddConfig = false
     
     var body: some View {
@@ -53,7 +53,7 @@ struct ConfigurationListView: View {
 }
 
 struct ConfigurationRow: View {
-    let configuration: WidgetConfiguration
+    let configuration: StatlyWidgetConfiguration
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {

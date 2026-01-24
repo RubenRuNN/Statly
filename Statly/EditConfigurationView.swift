@@ -9,12 +9,12 @@ import SwiftUI
 
 struct EditConfigurationView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var config: WidgetConfiguration
+    @State private var config: StatlyWidgetConfiguration
     @State private var isTestingConnection = false
     @State private var testError: String?
     @State private var availableStats: [Stat] = []
     
-    init(configuration: WidgetConfiguration) {
+    init(configuration: StatlyWidgetConfiguration) {
         _config = State(initialValue: configuration)
     }
     

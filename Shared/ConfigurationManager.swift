@@ -11,7 +11,8 @@ class ConfigurationManager {
     static let shared = ConfigurationManager()
     
     private let configurationsKey = "widget_configurations"
-    private let appGroupIdentifier = "group.com.yourcompany.statly" // Change this!
+    // Must match the App Group configured in both the app and widget extension entitlements.
+    private let appGroupIdentifier = "group.com.swipeuplabs.statly"
     
     private var userDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupIdentifier)
@@ -21,7 +22,7 @@ class ConfigurationManager {
     
     // MARK: - Save/Load Configurations
     
-    func saveConfiguration(_ config: WidgetConfiguration) {
+    func saveConfiguration(_ config: StatlyWidgetConfiguration) {
         var configs = loadAllConfigurations()
         
         if let index = configs.firstIndex(where: { $0.id == config.id }) {
@@ -35,15 +36,15 @@ class ConfigurationManager {
         }
     }
     
-    func loadAllConfigurations() -> [WidgetConfiguration] {
+    func loadAllConfigurations() -> [StatlyWidgetConfiguration] {
         guard let data = userDefaults?.data(forKey: configurationsKey),
-              let configs = try? JSONDecoder().decode([WidgetConfiguration].self, from: data) else {
+              let configs = try? JSONDecoder().decode([StatlyWidgetConfiguration].self, from: data) else {
             return []
         }
         return configs
     }
     
-    func loadConfiguration(id: UUID) -> WidgetConfiguration? {
+    func loadConfiguration(id: UUID) -> StatlyWidgetConfiguration? {
         return loadAllConfigurations().first(where: { $0.id == id })
     }
     

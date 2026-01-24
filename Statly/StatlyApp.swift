@@ -11,7 +11,17 @@ import SwiftUI
 struct StatlyApp: App {
     var body: some Scene {
         WindowGroup {
-            ConfigurationListView()
+            TabView {
+                ConfigurationListView()
+                    .tabItem {
+                        Label("Widgets", systemImage: "rectangle.grid.2x2")
+                    }
+
+                DocumentationView()
+                    .tabItem {
+                        Label("Docs", systemImage: "doc.text")
+                    }
+            }
         }
     }
 }

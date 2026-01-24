@@ -9,12 +9,12 @@ import SwiftUI
 
 struct CreateConfigurationView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var config = WidgetConfiguration()
+    @State private var config = StatlyWidgetConfiguration()
     @State private var isTestingConnection = false
     @State private var testError: String?
     @State private var testSuccess = false
     
-    let onSave: (WidgetConfiguration) -> Void
+    let onSave: (StatlyWidgetConfiguration) -> Void
     
     var body: some View {
         NavigationView {

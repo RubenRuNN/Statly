@@ -12,14 +12,14 @@ class APIService {
     
     private init() {}
     
-    func fetchStats(config: WidgetConfiguration) async throws -> StatsResponse {
+    func fetchStats(config: StatlyWidgetConfiguration) async throws -> StatsResponse {
         guard let url = URL(string: config.endpointURL) else {
             throw APIError.invalidURL
         }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.setValue("Bearer \(config.apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue(config.apiKey, forHTTPHeaderField: "api_key")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.timeoutInterval = 30
         
@@ -42,7 +42,7 @@ class APIService {
     }
     
     func testEndpoint(url: String, apiKey: String) async throws -> StatsResponse {
-        let tempConfig = WidgetConfiguration(
+        let tempConfig = StatlyWidgetConfiguration(
             endpointURL: url,
             apiKey: apiKey
         )
