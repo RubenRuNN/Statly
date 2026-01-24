@@ -11,7 +11,7 @@ import SwiftUI
 struct StatlyApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ConfigurationListView()
         }
     }
 }

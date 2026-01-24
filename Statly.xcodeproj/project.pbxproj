@@ -6,14 +6,83 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5E6475DE2F24E45900EB6D2C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E6475DD2F24E45900EB6D2C /* WidgetKit.framework */; };
+		5E6475E02F24E45900EB6D2C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E6475DF2F24E45900EB6D2C /* SwiftUI.framework */; };
+		5E6475F12F24E45A00EB6D2C /* StatlyWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5E6475DB2F24E45900EB6D2C /* StatlyWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5E6475F92F24E4C000EB6D2C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6475F82F24E4C000EB6D2C /* Models.swift */; };
+		5E6475FA2F24E4C000EB6D2C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6475F82F24E4C000EB6D2C /* Models.swift */; };
+		5E6475FC2F24E4F400EB6D2C /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6475FB2F24E4F400EB6D2C /* APIService.swift */; };
+		5E6475FD2F24E4F400EB6D2C /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6475FB2F24E4F400EB6D2C /* APIService.swift */; };
+		5E6475FF2F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6475FE2F24E50D00EB6D2C /* ConfigurationManager.swift */; };
+		5E6476002F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6475FE2F24E50D00EB6D2C /* ConfigurationManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5E6475EF2F24E45A00EB6D2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E6475C12F24E3C800EB6D2C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5E6475DA2F24E45900EB6D2C;
+			remoteInfo = StatlyWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5E6475F62F24E45A00EB6D2C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5E6475F12F24E45A00EB6D2C /* StatlyWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		5E6475C92F24E3C800EB6D2C /* Statly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Statly.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E6475DB2F24E45900EB6D2C /* StatlyWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StatlyWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E6475DD2F24E45900EB6D2C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		5E6475DF2F24E45900EB6D2C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		5E6475F82F24E4C000EB6D2C /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		5E6475FB2F24E4F400EB6D2C /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		5E6475FE2F24E50D00EB6D2C /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
+		5E6476022F24E89A00EB6D2C /* StatlyWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatlyWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5E6475F22F24E45A00EB6D2C /* Exceptions for "StatlyWidget" folder in "StatlyWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5E6475DA2F24E45900EB6D2C /* StatlyWidgetExtension */;
+		};
+		5E64760C2F24EAAB00EB6D2C /* Exceptions for "StatlyWidget" folder in "Statly" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WidgetViews.swift,
+			);
+			target = 5E6475C82F24E3C800EB6D2C /* Statly */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5E6475CB2F24E3C800EB6D2C /* Statly */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Statly;
+			sourceTree = "<group>";
+		};
+		5E6475E12F24E45900EB6D2C /* StatlyWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5E64760C2F24EAAB00EB6D2C /* Exceptions for "StatlyWidget" folder in "Statly" target */,
+				5E6475F22F24E45A00EB6D2C /* Exceptions for "StatlyWidget" folder in "StatlyWidgetExtension" target */,
+			);
+			path = StatlyWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,13 +95,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5E6475D82F24E45900EB6D2C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E6475E02F24E45900EB6D2C /* SwiftUI.framework in Frameworks */,
+				5E6475DE2F24E45900EB6D2C /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		5E6475C02F24E3C800EB6D2C = {
 			isa = PBXGroup;
 			children = (
+				5E6476022F24E89A00EB6D2C /* StatlyWidgetExtension.entitlements */,
+				5E6475F72F24E49000EB6D2C /* Shared */,
 				5E6475CB2F24E3C800EB6D2C /* Statly */,
+				5E6475E12F24E45900EB6D2C /* StatlyWidget */,
+				5E6475DC2F24E45900EB6D2C /* Frameworks */,
 				5E6475CA2F24E3C800EB6D2C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +123,28 @@
 			isa = PBXGroup;
 			children = (
 				5E6475C92F24E3C800EB6D2C /* Statly.app */,
+				5E6475DB2F24E45900EB6D2C /* StatlyWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5E6475DC2F24E45900EB6D2C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5E6475DD2F24E45900EB6D2C /* WidgetKit.framework */,
+				5E6475DF2F24E45900EB6D2C /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5E6475F72F24E49000EB6D2C /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				5E6475F82F24E4C000EB6D2C /* Models.swift */,
+				5E6475FB2F24E4F400EB6D2C /* APIService.swift */,
+				5E6475FE2F24E50D00EB6D2C /* ConfigurationManager.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -55,10 +157,12 @@
 				5E6475C52F24E3C800EB6D2C /* Sources */,
 				5E6475C62F24E3C800EB6D2C /* Frameworks */,
 				5E6475C72F24E3C800EB6D2C /* Resources */,
+				5E6475F62F24E45A00EB6D2C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5E6475F02F24E45A00EB6D2C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				5E6475CB2F24E3C800EB6D2C /* Statly */,
@@ -69,6 +173,28 @@
 			productName = Statly;
 			productReference = 5E6475C92F24E3C800EB6D2C /* Statly.app */;
 			productType = "com.apple.product-type.application";
+		};
+		5E6475DA2F24E45900EB6D2C /* StatlyWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E6475F32F24E45A00EB6D2C /* Build configuration list for PBXNativeTarget "StatlyWidgetExtension" */;
+			buildPhases = (
+				5E6475D72F24E45900EB6D2C /* Sources */,
+				5E6475D82F24E45900EB6D2C /* Frameworks */,
+				5E6475D92F24E45900EB6D2C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5E6475E12F24E45900EB6D2C /* StatlyWidget */,
+			);
+			name = StatlyWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = StatlyWidgetExtension;
+			productReference = 5E6475DB2F24E45900EB6D2C /* StatlyWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -81,6 +207,9 @@
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					5E6475C82F24E3C800EB6D2C = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					5E6475DA2F24E45900EB6D2C = {
 						CreatedOnToolsVersion = 26.2;
 					};
 				};
@@ -100,12 +229,20 @@
 			projectRoot = "";
 			targets = (
 				5E6475C82F24E3C800EB6D2C /* Statly */,
+				5E6475DA2F24E45900EB6D2C /* StatlyWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5E6475C72F24E3C800EB6D2C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E6475D92F24E45900EB6D2C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -119,10 +256,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E6476002F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */,
+				5E6475F92F24E4C000EB6D2C /* Models.swift in Sources */,
+				5E6475FD2F24E4F400EB6D2C /* APIService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E6475D72F24E45900EB6D2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E6475FF2F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */,
+				5E6475FC2F24E4F400EB6D2C /* APIService.swift in Sources */,
+				5E6475FA2F24E4C000EB6D2C /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5E6475F02F24E45A00EB6D2C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5E6475DA2F24E45900EB6D2C /* StatlyWidgetExtension */;
+			targetProxy = 5E6475EF2F24E45A00EB6D2C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		5E6475D22F24E3C900EB6D2C /* Debug */ = {
@@ -251,6 +409,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Statly/Statly.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8MW98SZX6F;
@@ -261,6 +420,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -283,6 +443,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Statly/Statly.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8MW98SZX6F;
@@ -293,6 +454,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -303,6 +465,78 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5E6475F42F24E45A00EB6D2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = StatlyWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8MW98SZX6F;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StatlyWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = StatlyWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.swipeuplabs.Statly.StatlyWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5E6475F52F24E45A00EB6D2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = StatlyWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8MW98SZX6F;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StatlyWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = StatlyWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.swipeuplabs.Statly.StatlyWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -327,6 +561,15 @@
 			buildConfigurations = (
 				5E6475D52F24E3C900EB6D2C /* Debug */,
 				5E6475D62F24E3C900EB6D2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E6475F32F24E45A00EB6D2C /* Build configuration list for PBXNativeTarget "StatlyWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E6475F42F24E45A00EB6D2C /* Debug */,
+				5E6475F52F24E45A00EB6D2C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
