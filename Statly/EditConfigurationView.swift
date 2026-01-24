@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import PhotosUI
+import UIKit
 
 struct EditConfigurationView: View {
     @Environment(\.dismiss) var dismiss
@@ -13,6 +15,16 @@ struct EditConfigurationView: View {
     @State private var isTestingConnection = false
     @State private var testError: String?
     @State private var availableStats: [Stat] = []
+    @State private var selectedLogoItem: PhotosPickerItem?
+    @State private var logoPreview: Image?
+    
+    private var sampleStats: [Stat] {
+        [
+            Stat(label: "USERS", value: "1,234", trend: "+12%", trendDirection: .up),
+            Stat(label: "MRR", value: "$45.2K", trend: "-5%", trendDirection: .down),
+            Stat(label: "CONVERSIONS", value: "89", trend: "0%", trendDirection: .neutral)
+        ]
+    }
     
     init(configuration: StatlyWidgetConfiguration) {
         _config = State(initialValue: configuration)
@@ -75,8 +87,27 @@ struct EditConfigurationView: View {
             }
             
             Section("Logo") {
-                TextField("Logo URL", text: $config.styling.logoURL)
+                Toggle("Show logo", isOn: $config.styling.showsLogo)
+                Toggle("Show app name", isOn: $config.styling.showsAppName)
+                
+                PhotosPicker("Pick logo from Photos", selection: $selectedLogoItem, matching: .images)
+                    .disabled(!config.styling.showsLogo)
+                
+                TextField("Logo URL (optional)", text: $config.styling.logoURL)
                     .textInputAutocapitalization(.never)
+                    .disabled(!config.styling.showsLogo)
+                
+                if let logoPreview {
+                    logoPreview
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 40)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }
+            
+            Section("Preview") {
+                WidgetPreviewView(config: config, stats: availableStats.isEmpty ? sampleStats : availableStats)
             }
         }
         .navigationTitle("Edit Widget")
@@ -89,7 +120,22 @@ struct EditConfigurationView: View {
             }
         }
         .onAppear {
+            if let data = config.styling.logoImageData,
+               let uiImage = UIImage(data: data) {
+                logoPreview = Image(uiImage: uiImage)
+            }
             testConnection()
+        }
+        .onChange(of: selectedLogoItem) { _, newItem in
+            guard let item = newItem else { return }
+            Task {
+                if let data = try? await item.loadTransferable(type: Data.self) {
+                    config.styling.logoImageData = data
+                    if let uiImage = UIImage(data: data) {
+                        logoPreview = Image(uiImage: uiImage)
+                    }
+                }
+            }
         }
     }
     

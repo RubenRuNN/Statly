@@ -110,6 +110,9 @@ struct WidgetStyling: Codable {
     var trendNeutralColor: String
     var logoURL: String
     var appName: String
+    var showsLogo: Bool
+    var showsAppName: Bool
+    var logoImageData: Data?
     
     init(
         backgroundColor: String = "#1C1C1E",
@@ -119,7 +122,10 @@ struct WidgetStyling: Codable {
         trendDownColor: String = "#FF3B30",
         trendNeutralColor: String = "#8E8E93",
         logoURL: String = "",
-        appName: String = "My App"
+        appName: String = "My App",
+        showsLogo: Bool = true,
+        showsAppName: Bool = true,
+        logoImageData: Data? = nil
     ) {
         self.backgroundColor = backgroundColor
         self.primaryTextColor = primaryTextColor
@@ -129,6 +135,9 @@ struct WidgetStyling: Codable {
         self.trendNeutralColor = trendNeutralColor
         self.logoURL = logoURL
         self.appName = appName
+        self.showsLogo = showsLogo
+        self.showsAppName = showsAppName
+        self.logoImageData = logoImageData
     }
 }
 

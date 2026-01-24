@@ -10,9 +10,9 @@ struct StatlyEntry: TimelineEntry {
 }
 
 // MARK: - Widget Provider
-struct StatlyWidgetProvider: TimelineProvider {
+struct StatlyWidgetProvider: AppIntentTimelineProvider {
     typealias Entry = StatlyEntry
-    
+
     func placeholder(in context: Context) -> StatlyEntry {
         StatlyEntry(
             date: Date(),
@@ -21,56 +21,67 @@ struct StatlyWidgetProvider: TimelineProvider {
             error: nil
         )
     }
-    
-    func getSnapshot(in context: Context, completion: @escaping (StatlyEntry) -> Void) {
-        let entry = StatlyEntry(
+
+    func snapshot(for configurationIntent: StatlyWidgetConfigurationIntent, in context: Context) async -> StatlyEntry {
+        StatlyEntry(
             date: Date(),
             configuration: createSampleConfig(),
             stats: createSampleStats(),
             error: nil
         )
-        completion(entry)
     }
-    
-    func getTimeline(in context: Context, completion: @escaping (Timeline<StatlyEntry>) -> Void) {
-        Task {
-            await fetchAndCreateTimeline(context: context, completion: completion)
-        }
-    }
-    
-    private func fetchAndCreateTimeline(
-        context: Context,
-        completion: @escaping (Timeline<StatlyEntry>) -> Void
-    ) async {
+
+    func timeline(for configurationIntent: StatlyWidgetConfigurationIntent, in context: Context) async -> Timeline<StatlyEntry> {
         let configurations = ConfigurationManager.shared.loadAllConfigurations()
-        
-        guard let config = configurations.first else {
+
+        // No configurations saved at all → show "No Widget Configured" view.
+        guard !configurations.isEmpty else {
             let entry = StatlyEntry(
                 date: Date(),
                 configuration: nil,
                 stats: nil,
-                error: "No widget configured"
+                error: nil
             )
-            let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
-            completion(timeline)
-            return
+            let next = Date().addingTimeInterval(3600)
+            return Timeline(entries: [entry], policy: .after(next))
         }
-        
+
+        // User hasn't picked a configuration in the widget edit sheet yet.
+        guard let selected = configurationIntent.configuration else {
+            let entry = StatlyEntry(
+                date: Date(),
+                configuration: nil,
+                stats: nil,
+                error: "Select a widget"
+            )
+            let next = Date().addingTimeInterval(300)
+            return Timeline(entries: [entry], policy: .after(next))
+        }
+
+        guard let config = configuration(id: selected.id, in: configurations) else {
+            let entry = StatlyEntry(
+                date: Date(),
+                configuration: nil,
+                stats: nil,
+                error: "Select a widget"
+            )
+            let next = Date().addingTimeInterval(300)
+            return Timeline(entries: [entry], policy: .after(next))
+        }
+
         do {
             let stats = try await APIService.shared.fetchStats(config: config)
             ConfigurationManager.shared.cacheStats(stats, for: config.id)
-            
+
             let entry = StatlyEntry(
                 date: Date(),
                 configuration: config,
                 stats: stats,
                 error: nil
             )
-            
+
             let nextUpdate = Date().addingTimeInterval(config.refreshInterval.timeInterval)
-            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-            completion(timeline)
-            
+            return Timeline(entries: [entry], policy: .after(nextUpdate))
         } catch {
             if let cachedStats = ConfigurationManager.shared.loadCachedStats(for: config.id) {
                 let entry = StatlyEntry(
@@ -79,8 +90,8 @@ struct StatlyWidgetProvider: TimelineProvider {
                     stats: cachedStats,
                     error: "Using cached data"
                 )
-                let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(300)))
-                completion(timeline)
+                let next = Date().addingTimeInterval(300)
+                return Timeline(entries: [entry], policy: .after(next))
             } else {
                 let entry = StatlyEntry(
                     date: Date(),
@@ -88,12 +99,17 @@ struct StatlyWidgetProvider: TimelineProvider {
                     stats: nil,
                     error: error.localizedDescription
                 )
-                let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(300)))
-                completion(timeline)
+                let next = Date().addingTimeInterval(300)
+                return Timeline(entries: [entry], policy: .after(next))
             }
         }
     }
-    
+
+    private func configuration(id: UUID,
+                               in configurations: [StatlyWidgetConfiguration]) -> StatlyWidgetConfiguration? {
+        configurations.first { $0.id == id }
+    }
+
     private func createSampleConfig() -> StatlyWidgetConfiguration {
         StatlyWidgetConfiguration(
             name: "Sample Widget",
@@ -108,7 +124,7 @@ struct StatlyWidgetProvider: TimelineProvider {
             )
         )
     }
-    
+
     private func createSampleStats() -> StatsResponse {
         StatsResponse(
             stats: [
@@ -125,11 +141,15 @@ struct StatlyWidgetProvider: TimelineProvider {
 struct StatlyWidgetEntryView: View {
     @Environment(\.widgetFamily) var widgetFamily
     let entry: StatlyEntry
-    
+
     var body: some View {
         Group {
             if let error = entry.error, entry.stats == nil {
-                ErrorView(error: error, config: entry.configuration)
+                if error == "Select a widget" {
+                    NoConfigSelectedView()
+                } else {
+                    ErrorView(error: error, config: entry.configuration)
+                }
             } else if let config = entry.configuration, let stats = entry.stats {
                 switch widgetFamily {
                 case .systemSmall:
@@ -145,6 +165,13 @@ struct StatlyWidgetEntryView: View {
                 NoConfigView()
             }
         }
+        .containerBackground(for: .widget) {
+            if let config = entry.configuration {
+                Color(hex: config.styling.backgroundColor)
+            } else {
+                Color.black
+            }
+        }
     }
 }
 
@@ -154,7 +181,9 @@ struct StatlyWidget: Widget {
     let kind = "StatlyWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: StatlyWidgetProvider()) { entry in
+        AppIntentConfiguration(kind: kind,
+                               intent: StatlyWidgetConfigurationIntent.self,
+                               provider: StatlyWidgetProvider()) { entry in
             StatlyWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Statly")
@@ -162,3 +191,4 @@ struct StatlyWidget: Widget {
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
+

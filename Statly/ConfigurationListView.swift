@@ -33,6 +33,8 @@ struct ConfigurationListView: View {
                 CreateConfigurationView { newConfig in
                     configurations.append(newConfig)
                 }
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
             }
             .onAppear {
                 loadConfigurations()
