@@ -12,12 +12,14 @@ import WidgetKit
 
 struct EditConfigurationView: View {
     @Environment(\.dismiss) var dismiss
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     @State private var config: StatlyWidgetConfiguration
     @State private var isTestingConnection = false
     @State private var testError: String?
     @State private var availableStats: [Stat] = []
     @State private var selectedLogoItem: PhotosPickerItem?
     @State private var logoPreview: Image?
+    @State private var showingSubscription = false
     
     private var sampleStats: [Stat] {
         [
@@ -120,15 +122,21 @@ struct EditConfigurationView: View {
             
             Section {
                 Picker("Refresh Interval", selection: $config.refreshInterval) {
-                    ForEach(RefreshInterval.allCases, id: \.self) { interval in
+                    ForEach(availableRefreshIntervals, id: \.self) { interval in
                         Text(interval.displayName).tag(interval)
                     }
                 }
                 .pickerStyle(.menu)
+                .disabled(!subscriptionManager.isPremium && config.refreshInterval.rawValue > 120)
             } header: {
                 Text("Refresh Interval")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+            } footer: {
+                if !subscriptionManager.isPremium {
+                    Text("Free version limited to 2 hours. Upgrade to Premium for all intervals.")
+                        .font(.caption)
+                }
             }
             
             Section {
@@ -187,7 +195,21 @@ struct EditConfigurationView: View {
             Section {
                 VStack(alignment: .leading, spacing: 16) {
                     Toggle("Show logo", isOn: $config.styling.showsLogo)
+                        .disabled(!subscriptionManager.isPremium)
                     Toggle("Show app name", isOn: $config.styling.showsAppName)
+                    
+                    if !subscriptionManager.isPremium && config.styling.showsLogo {
+                        Button(action: { showingSubscription = true }) {
+                            HStack {
+                                Image(systemName: "crown.fill")
+                                    .foregroundStyle(.yellow)
+                                Text("Logo option requires Premium")
+                                    .font(.caption)
+                                    .foregroundStyle(.blue)
+                            }
+                        }
+                        .padding(.top, 4)
+                    }
                     
                     if config.styling.showsLogo {
                         Divider()
@@ -264,6 +286,26 @@ struct EditConfigurationView: View {
         .onChange(of: config.styling.logoURL) { _, newURL in
             downloadLogoFromURL(newURL)
         }
+        .sheet(isPresented: $showingSubscription) {
+            SubscriptionView()
+        }
+        .onAppear {
+            Task {
+                await subscriptionManager.checkSubscriptionStatus()
+            }
+        }
+        .onChange(of: subscriptionManager.subscriptionStatus) { _, _ in
+            // If user downgrades, disable logo
+            if !subscriptionManager.isPremium {
+                config.styling.showsLogo = false
+            }
+            // If user upgrades, ensure refresh interval is valid
+            if subscriptionManager.isPremium && config.refreshInterval.rawValue > 120 {
+                // Keep current interval if premium
+            } else if !subscriptionManager.isPremium && config.refreshInterval.rawValue > 120 {
+                config.refreshInterval = .twoHours
+            }
+        }
     }
     
     private func testConnection() {
@@ -314,18 +356,33 @@ struct EditConfigurationView: View {
     }
     
     private func saveConfiguration() {
+        // Enforce subscription limits before saving
+        var configToSave = config
+        
+        // Remove logo if user doesn't have premium
+        if !subscriptionManager.isPremium {
+            configToSave.styling.showsLogo = false
+            configToSave.styling.logoURL = ""
+            configToSave.styling.logoImageData = nil
+        }
+        
+        // Limit refresh interval for free users
+        if !subscriptionManager.isPremium && configToSave.refreshInterval.rawValue > 120 {
+            configToSave.refreshInterval = .twoHours
+        }
+        
         // Ensure logo is downloaded if URL is provided but not yet downloaded
-        if !config.styling.logoURL.isEmpty && config.styling.logoImageData == nil {
+        if !configToSave.styling.logoURL.isEmpty && configToSave.styling.logoImageData == nil {
             Task {
-                await downloadLogoFromURLSync(config.styling.logoURL)
+                await downloadLogoFromURLSync(configToSave.styling.logoURL)
                 await MainActor.run {
-                    ConfigurationManager.shared.saveConfiguration(config)
+                    ConfigurationManager.shared.saveConfiguration(configToSave)
                     reloadWidgets()
                     dismiss()
                 }
             }
         } else {
-            ConfigurationManager.shared.saveConfiguration(config)
+            ConfigurationManager.shared.saveConfiguration(configToSave)
             reloadWidgets()
             dismiss()
         }
@@ -348,6 +405,14 @@ struct EditConfigurationView: View {
             }
         } catch {
             print("Failed to download logo before save: \(error.localizedDescription)")
+        }
+    }
+    
+    private var availableRefreshIntervals: [RefreshInterval] {
+        if subscriptionManager.isPremium {
+            return RefreshInterval.allCases
+        } else {
+            return RefreshInterval.allCases.filter { $0.rawValue <= 120 }
         }
     }
 }

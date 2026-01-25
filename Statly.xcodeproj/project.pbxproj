@@ -16,6 +16,8 @@
 		5E6475FD2F24E4F400EB6D2C /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6475FB2F24E4F400EB6D2C /* APIService.swift */; };
 		5E6475FF2F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6475FE2F24E50D00EB6D2C /* ConfigurationManager.swift */; };
 		5E6476002F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6475FE2F24E50D00EB6D2C /* ConfigurationManager.swift */; };
+		5EF9B0192F26820100D62DA7 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF9B0182F26820100D62DA7 /* SubscriptionManager.swift */; };
+		5EF9B01A2F26820100D62DA7 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF9B0182F26820100D62DA7 /* SubscriptionManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +53,7 @@
 		5E6475FB2F24E4F400EB6D2C /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		5E6475FE2F24E50D00EB6D2C /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		5E6476022F24E89A00EB6D2C /* StatlyWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatlyWidgetExtension.entitlements; sourceTree = "<group>"; };
+		5EF9B0182F26820100D62DA7 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -143,6 +146,7 @@
 				5E6475F82F24E4C000EB6D2C /* Models.swift */,
 				5E6475FB2F24E4F400EB6D2C /* APIService.swift */,
 				5E6475FE2F24E50D00EB6D2C /* ConfigurationManager.swift */,
+				5EF9B0182F26820100D62DA7 /* SubscriptionManager.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -256,6 +260,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EF9B01A2F26820100D62DA7 /* SubscriptionManager.swift in Sources */,
 				5E6476002F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */,
 				5E6475F92F24E4C000EB6D2C /* Models.swift in Sources */,
 				5E6475FD2F24E4F400EB6D2C /* APIService.swift in Sources */,
@@ -268,6 +273,7 @@
 			files = (
 				5E6475FF2F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */,
 				5E6475FC2F24E4F400EB6D2C /* APIService.swift in Sources */,
+				5EF9B0192F26820100D62DA7 /* SubscriptionManager.swift in Sources */,
 				5E6475FA2F24E4C000EB6D2C /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

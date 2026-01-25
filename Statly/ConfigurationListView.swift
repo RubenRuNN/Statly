@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct ConfigurationListView: View {
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     @State private var configurations: [StatlyWidgetConfiguration] = []
     @State private var showingAddConfig = false
+    @State private var showingSubscription = false
     
     var body: some View {
         NavigationView {
@@ -22,11 +24,25 @@ struct ConfigurationListView: View {
             }
             .navigationTitle("Widgets")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: { showingSubscription = true }) {
+                        Image(systemName: subscriptionManager.isPremium ? "crown.fill" : "crown")
+                            .font(.title3)
+                            .foregroundStyle(subscriptionManager.isPremium ? .yellow : .secondary)
+                    }
+                }
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showingAddConfig = true }) {
+                    Button(action: { 
+                        if canAddWidget {
+                            showingAddConfig = true
+                        } else {
+                            showingSubscription = true
+                        }
+                    }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.title3)
-                            .foregroundStyle(.tint)
+                            .foregroundStyle(canAddWidget ? Color.accentColor : Color.secondary)
                     }
                 }
             }
@@ -37,8 +53,14 @@ struct ConfigurationListView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
             }
+            .sheet(isPresented: $showingSubscription) {
+                SubscriptionView()
+            }
             .onAppear {
                 loadConfigurations()
+                Task {
+                    await subscriptionManager.checkSubscriptionStatus()
+                }
             }
         }
     }
@@ -46,6 +68,34 @@ struct ConfigurationListView: View {
     private var configurationsList: some View {
         ScrollView {
             LazyVStack(spacing: 12) {
+                // Widget limit warning for free users
+                if !subscriptionManager.isPremium && configurations.count >= 2 {
+                    HStack {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundStyle(.blue)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Widget Limit Reached")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            Text("Free version allows up to 2 widgets. Upgrade to Premium for unlimited widgets.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Button("Upgrade") {
+                            showingSubscription = true
+                        }
+                        .font(.caption)
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+                    }
+                    .padding()
+                    .background(Color.blue.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                }
+                
                 ForEach(configurations) { config in
                     NavigationLink(destination: EditConfigurationView(configuration: config)) {
                         ConfigurationRow(configuration: config)
@@ -103,6 +153,10 @@ struct ConfigurationListView: View {
     private func deleteConfiguration(_ config: StatlyWidgetConfiguration) {
         ConfigurationManager.shared.deleteConfiguration(id: config.id)
         configurations.removeAll { $0.id == config.id }
+    }
+    
+    private var canAddWidget: Bool {
+        subscriptionManager.isPremium || configurations.count < 2
     }
 }
 
