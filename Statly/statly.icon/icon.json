@@ -6,30 +6,8 @@
     {
       "layers" : [
         {
-          "image-name" : "Untitled design - 2.PNG",
-          "name" : "Untitled design - 2",
-          "position" : {
-            "scale" : 1,
-            "translation-in-points" : [
-              0,
-              0
-            ]
-          }
-        },
-        {
-          "blend-mode" : "normal",
-          "fill" : "none",
-          "glass" : true,
-          "hidden" : true,
-          "image-name" : "Design sem nome.png",
-          "name" : "Design sem nome",
-          "position" : {
-            "scale" : 1,
-            "translation-in-points" : [
-              0,
-              0
-            ]
-          }
+          "image-name" : "statly-logo.png",
+          "name" : "statly-logo"
         }
       ],
       "shadow" : {
