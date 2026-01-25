@@ -59,16 +59,37 @@ struct WidgetHeader: View {
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                            case .failure(_), .empty:
-                                Circle()
-                                    .fill(Color(hex: config.styling.primaryTextColor).opacity(0.3))
+                                    .frame(width: compact ? 16 : 20, height: compact ? 16 : 20)
+                            case .failure(_):
+                                // Show a placeholder icon when image fails to load
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: compact ? 16 : 20, height: compact ? 16 : 20)
+                                    .foregroundColor(Color(hex: config.styling.primaryTextColor).opacity(0.5))
+                            case .empty:
+                                // Show loading placeholder
+                                ProgressView()
+                                    .frame(width: compact ? 16 : 20, height: compact ? 16 : 20)
+                                    .scaleEffect(0.6)
                             @unknown default:
-                                Circle()
-                                    .fill(Color(hex: config.styling.primaryTextColor).opacity(0.3))
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: compact ? 16 : 20, height: compact ? 16 : 20)
+                                    .foregroundColor(Color(hex: config.styling.primaryTextColor).opacity(0.5))
                             }
                         }
                         .frame(width: compact ? 16 : 20, height: compact ? 16 : 20)
                         .clipShape(Circle())
+                    } else {
+                        // Fallback when URL is invalid
+                        Image(systemName: "photo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: compact ? 16 : 20, height: compact ? 16 : 20)
+                            .foregroundColor(Color(hex: config.styling.primaryTextColor).opacity(0.5))
+                            .clipShape(Circle())
                     }
                 }
             }
@@ -146,6 +167,11 @@ struct SmallWidgetView: View {
         updatedTimeText(from: stats.updatedAt)
     }
     
+    private var displayStats: [Stat] {
+        let selected = config.getSelectedStats(from: stats.stats)
+        return selected.isEmpty ? Array(stats.stats.prefix(1)) : Array(selected.prefix(1))
+    }
+    
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 0) {
@@ -153,8 +179,8 @@ struct SmallWidgetView: View {
                 
                 Spacer()
                 
-                // Show first stat only
-                if let firstStat = stats.stats.first {
+                // Show first selected stat, or first stat if none selected
+                if let firstStat = displayStats.first {
                     StatItemView(stat: firstStat, config: config, compact: false)
                         .padding(.horizontal, 16)
                 }
@@ -183,6 +209,11 @@ struct MediumWidgetView: View {
         updatedTimeText(from: stats.updatedAt)
     }
     
+    private var displayStats: [Stat] {
+        let selected = config.getSelectedStats(from: stats.stats)
+        return selected.isEmpty ? Array(stats.stats.prefix(3)) : Array(selected.prefix(3))
+    }
+    
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 0) {
@@ -190,11 +221,11 @@ struct MediumWidgetView: View {
                 
                 Spacer()
                 
-                // Show up to 3 stats in a row
+                // Show up to 3 selected stats in a row
                 HStack(alignment: .top, spacing: 16) {
-                    ForEach(Array(stats.stats.prefix(3))) { stat in
+                    ForEach(Array(displayStats.enumerated()), id: \.element.id) { index, stat in
                         StatItemView(stat: stat, config: config, compact: true)
-                        if stat.id != stats.stats.prefix(3).last?.id {
+                        if index < displayStats.count - 1 {
                             Spacer()
                         }
                     }
@@ -226,20 +257,25 @@ struct LargeWidgetView: View {
         updatedTimeText(from: stats.updatedAt)
     }
     
+    private var displayStats: [Stat] {
+        let selected = config.getSelectedStats(from: stats.stats)
+        return selected.isEmpty ? Array(stats.stats.prefix(6)) : Array(selected.prefix(6))
+    }
+    
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 12) {
                 WidgetHeader(config: config, date: date, compact: false)
                 
-                // Show up to 6 stats in a 2x3 grid
+                // Show up to 6 selected stats in a 2x3 grid
                 VStack(spacing: 16) {
                     ForEach(0..<2) { row in
                         HStack(alignment: .top, spacing: 16) {
                             ForEach(0..<3) { col in
                                 let index = row * 3 + col
-                                if index < stats.stats.count {
+                                if index < displayStats.count {
                                     StatItemView(
-                                        stat: stats.stats[index],
+                                        stat: displayStats[index],
                                         config: config,
                                         compact: true
                                     )

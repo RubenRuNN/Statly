@@ -22,6 +22,7 @@ struct StatlyApp: App {
                         Label("Docs", systemImage: "doc.text")
                     }
             }
+            .tint(.accentColor)
         }
     }
 }

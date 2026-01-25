@@ -58,7 +58,7 @@ struct StatlyWidgetProvider: AppIntentTimelineProvider {
             return Timeline(entries: [entry], policy: .after(next))
         }
 
-        guard let config = configuration(id: selected.id, in: configurations) else {
+        guard var config = configuration(id: selected.id, in: configurations) else {
             let entry = StatlyEntry(
                 date: Date(),
                 configuration: nil,
@@ -67,6 +67,11 @@ struct StatlyWidgetProvider: AppIntentTimelineProvider {
             )
             let next = Date().addingTimeInterval(300)
             return Timeline(entries: [entry], policy: .after(next))
+        }
+        
+        // Ensure logo image is loaded from separate storage
+        if let logoData = ConfigurationManager.shared.loadLogoImage(for: config.id) {
+            config.styling.logoImageData = logoData
         }
 
         do {

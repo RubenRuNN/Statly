@@ -77,6 +77,20 @@ struct StatlyWidgetConfiguration: Codable, Identifiable {
         self.customLabels = customLabels
         self.styling = styling
     }
+    
+    /// Returns the selected stats in the configured order
+    func getSelectedStats(from allStats: [Stat]) -> [Stat] {
+        guard !selectedStatIndices.isEmpty else {
+            // If no selection, return all stats (backward compatibility)
+            return allStats
+        }
+        
+        // Return stats in the order specified by selectedStatIndices
+        return selectedStatIndices.compactMap { index in
+            guard index >= 0 && index < allStats.count else { return nil }
+            return allStats[index]
+        }
+    }
 }
 
 enum RefreshInterval: Int, Codable, CaseIterable {
@@ -115,15 +129,15 @@ struct WidgetStyling: Codable {
     var logoImageData: Data?
     
     init(
-        backgroundColor: String = "#1C1C1E",
+        backgroundColor: String = "#161a1d",
         primaryTextColor: String = "#8E8E93",
         valueTextColor: String = "#FFFFFF",
-        trendUpColor: String = "#34C759",
-        trendDownColor: String = "#FF3B30",
+        trendUpColor: String = "#45b99c",
+        trendDownColor: String = "#f87171",
         trendNeutralColor: String = "#8E8E93",
         logoURL: String = "",
         appName: String = "My App",
-        showsLogo: Bool = true,
+        showsLogo: Bool = false,
         showsAppName: Bool = true,
         logoImageData: Data? = nil
     ) {
