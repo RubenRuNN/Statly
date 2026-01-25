@@ -104,8 +104,8 @@ struct WidgetHeader: View {
             
             Spacer()
         }
-        .padding(.horizontal, compact ? 12 : 16)
-        .padding(.vertical, compact ? 8 : 10)
+        .padding(.horizontal, compact ? config.styling.horizontalPadding * 0.75 : config.styling.horizontalPadding)
+        .padding(.vertical, compact ? config.styling.verticalPadding * 0.8 : config.styling.verticalPadding)
     }
 }
 
@@ -182,7 +182,7 @@ struct SmallWidgetView: View {
                 // Show first selected stat, or first stat if none selected
                 if let firstStat = displayStats.first {
                     StatItemView(stat: firstStat, config: config, compact: false)
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, config.styling.horizontalPadding)
                 }
 
                 Spacer(minLength: 4)
@@ -192,7 +192,7 @@ struct SmallWidgetView: View {
                         .font(.caption2)
                         .foregroundColor(Color(hex: config.styling.primaryTextColor))
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.bottom, 6)
+                        .padding(.bottom, config.styling.verticalPadding * 0.75)
                 }
             }
         }
@@ -230,7 +230,7 @@ struct MediumWidgetView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, config.styling.horizontalPadding)
                 
                 Spacer(minLength: 4)
                 
@@ -239,8 +239,8 @@ struct MediumWidgetView: View {
                         .font(.caption2)
                         .foregroundColor(Color(hex: config.styling.primaryTextColor))
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 6)
+                        .padding(.horizontal, config.styling.horizontalPadding)
+                        .padding(.bottom, config.styling.verticalPadding * 0.75)
                 }
             }
         }
@@ -289,7 +289,7 @@ struct LargeWidgetView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, config.styling.horizontalPadding)
                 
                 Spacer(minLength: 4)
                 
@@ -298,8 +298,8 @@ struct LargeWidgetView: View {
                         .font(.caption2)
                         .foregroundColor(Color(hex: config.styling.primaryTextColor))
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 8)
+                        .padding(.horizontal, config.styling.horizontalPadding)
+                        .padding(.bottom, config.styling.verticalPadding)
                 }
             }
         }

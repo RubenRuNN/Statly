@@ -160,6 +160,44 @@ struct CreateConfigurationView: View {
                 }
                 
                 Section {
+                    VStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text("Horizontal Padding")
+                                    .font(.subheadline)
+                                Spacer()
+                                Text("\(Int(config.styling.horizontalPadding)) pt")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Slider(value: $config.styling.horizontalPadding, in: 8...32, step: 2)
+                        }
+                        
+                        Divider()
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text("Vertical Padding")
+                                    .font(.subheadline)
+                                Spacer()
+                                Text("\(Int(config.styling.verticalPadding)) pt")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Slider(value: $config.styling.verticalPadding, in: 4...20, step: 2)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                } header: {
+                    Text("Padding")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                } footer: {
+                    Text("Adjust the spacing around widget content")
+                        .font(.caption)
+                }
+                
+                Section {
                     VStack(alignment: .leading, spacing: 16) {
                         Toggle("Show logo", isOn: $config.styling.showsLogo)
                         Toggle("Show app name", isOn: $config.styling.showsAppName)
@@ -372,6 +410,9 @@ struct WidgetPreviewView: View {
         config.getSelectedStats(from: stats)
     }
     
+    // iOS widget dimensions (approximate)
+    private let widgetSize: CGFloat = 155 // Small widget is ~155x155 points
+    
     var body: some View {
         VStack(spacing: 12) {
             HStack {
@@ -388,22 +429,29 @@ struct WidgetPreviewView: View {
                 }
             }
             
-            SmallWidgetView(
-                config: config,
-                stats: StatsResponse(
-                    stats: displayStats.isEmpty ? stats : displayStats,
-                    updatedAt: statsResponse.updatedAt
-                ),
-                date: Date()
-            )
-            .frame(height: 155)
-            .background(Color(hex: config.styling.backgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            // Exact widget preview matching iOS widget appearance
+            ZStack {
+                // Background color - must match widget's containerBackground
+                Color(hex: config.styling.backgroundColor)
+                    .ignoresSafeArea()
+                
+                // Actual widget view content
+                SmallWidgetView(
+                    config: config,
+                    stats: StatsResponse(
+                        stats: displayStats.isEmpty ? stats : displayStats,
+                        updatedAt: statsResponse.updatedAt
+                    ),
+                    date: Date()
+                )
+            }
+            .frame(width: widgetSize, height: widgetSize)
+            .clipShape(RoundedRectangle(cornerRadius: 22)) // iOS widget corner radius (~22pt for small)
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                // Subtle border to show widget boundaries in preview
+                RoundedRectangle(cornerRadius: 22)
+                    .stroke(Color.gray.opacity(0.1), lineWidth: 0.5)
             )
-            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 2)
         }
     }
 }
