@@ -1,0 +1,90 @@
+{
+  "identifier" : "Products",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "identifier" : "com.swipeuplabs.pro.monthly",
+      "localizations" : [
+        {
+          "description" : "Unlock unlimited widgets, all refresh intervals, and logo customization",
+          "displayName" : "Statly Pro Monthly",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.swipeuplabs.pro.monthly",
+      "referenceName" : "Statly Pro Monthly",
+      "type" : "SUBSCRIPTION"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ],
+    "_storeKitErrorsEnabled" : false
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21482219",
+      "localizations" : [
+
+      ],
+      "name" : "Statly Pro",
+      "subscriptions" : [
+        "com.swipeuplabs.pro.monthly"
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

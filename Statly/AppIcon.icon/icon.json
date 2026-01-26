@@ -1,0 +1,38 @@
+{
+  "fill" : {
+    "solid" : "display-p3:0.50685,0.77847,1.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill" : {
+            "solid" : "display-p3:0.96522,0.95081,0.96783,1.00000"
+          },
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "statly-logo.png",
+          "name" : "statly-logo",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0,
+              -19.7109375
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}

@@ -8,8 +8,15 @@
 import SwiftUI
 
 struct ConfigurationListView: View {
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     @State private var configurations: [StatlyWidgetConfiguration] = []
     @State private var showingAddConfig = false
+    @State private var showingSubscription = false
+    @State private var showingLimitAlert = false
+    
+    var canCreateWidget: Bool {
+        configurations.count < subscriptionManager.maxWidgets
+    }
     
     var body: some View {
         NavigationView {
@@ -22,12 +29,32 @@ struct ConfigurationListView: View {
             }
             .navigationTitle("Widgets")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: { showingSubscription = true }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: subscriptionManager.subscriptionStatus.isPro ? "crown.fill" : "crown")
+                                .font(.caption)
+                            Text(subscriptionManager.subscriptionStatus.displayName)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                        }
+                        .foregroundStyle(subscriptionManager.subscriptionStatus.isPro ? .yellow : .secondary)
+                    }
+                }
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showingAddConfig = true }) {
+                    Button(action: {
+                        if canCreateWidget {
+                            showingAddConfig = true
+                        } else {
+                            showingLimitAlert = true
+                        }
+                    }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.title3)
                             .foregroundStyle(.tint)
                     }
+                    .disabled(!canCreateWidget && !subscriptionManager.subscriptionStatus.isPro)
                 }
             }
             .sheet(isPresented: $showingAddConfig) {
@@ -37,8 +64,22 @@ struct ConfigurationListView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
             }
+            .sheet(isPresented: $showingSubscription) {
+                SubscriptionView()
+            }
+            .alert("Widget Limit Reached", isPresented: $showingLimitAlert) {
+                Button("Upgrade to Pro", role: .none) {
+                    showingSubscription = true
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Basic plan allows up to 2 widgets. Upgrade to Pro for unlimited widgets.")
+            }
             .onAppear {
                 loadConfigurations()
+            }
+            .task {
+                await subscriptionManager.checkSubscriptionStatus()
             }
         }
     }
@@ -46,6 +87,30 @@ struct ConfigurationListView: View {
     private var configurationsList: some View {
         ScrollView {
             LazyVStack(spacing: 12) {
+                // Widget count indicator
+                if !subscriptionManager.subscriptionStatus.isPro {
+                    HStack {
+                        Text("\(configurations.count) / \(subscriptionManager.maxWidgets) widgets")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        if configurations.count >= subscriptionManager.maxWidgets {
+                            Button(action: { showingSubscription = true }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "crown.fill")
+                                        .font(.caption)
+                                    Text("Upgrade")
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                }
+                                .foregroundStyle(.yellow)
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                }
+                
                 ForEach(configurations) { config in
                     NavigationLink(destination: EditConfigurationView(configuration: config)) {
                         ConfigurationRow(configuration: config)
@@ -83,7 +148,13 @@ struct ConfigurationListView: View {
                     .padding(.horizontal, 40)
             }
             
-            Button(action: { showingAddConfig = true }) {
+            Button(action: {
+                if canCreateWidget {
+                    showingAddConfig = true
+                } else {
+                    showingLimitAlert = true
+                }
+            }) {
                 Label("Create Widget", systemImage: "plus.circle.fill")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -93,6 +164,18 @@ struct ConfigurationListView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .padding(.top, 8)
+            
+            if !canCreateWidget && !subscriptionManager.subscriptionStatus.isPro {
+                Button(action: { showingSubscription = true }) {
+                    HStack {
+                        Image(systemName: "crown.fill")
+                        Text("Upgrade to Pro for Unlimited Widgets")
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.yellow)
+                    .padding(.top, 8)
+                }
+            }
         }
     }
     

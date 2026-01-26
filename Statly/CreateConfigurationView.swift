@@ -12,6 +12,7 @@ import WidgetKit
 
 struct CreateConfigurationView: View {
     @Environment(\.dismiss) var dismiss
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     @State private var config = StatlyWidgetConfiguration()
     @State private var isTestingConnection = false
     @State private var testError: String?
@@ -19,6 +20,7 @@ struct CreateConfigurationView: View {
     @State private var selectedLogoItem: PhotosPickerItem?
     @State private var logoPreview: Image?
     @State private var availableStats: [Stat] = []
+    @State private var showingSubscription = false
     
     let onSave: (StatlyWidgetConfiguration) -> Void
     
@@ -133,7 +135,7 @@ struct CreateConfigurationView: View {
                 
                 Section {
                     Picker("Refresh Interval", selection: $config.refreshInterval) {
-                        ForEach(RefreshInterval.allCases, id: \.self) { interval in
+                        ForEach(subscriptionManager.allowedRefreshIntervals, id: \.self) { interval in
                             Text(interval.displayName).tag(interval)
                         }
                     }
@@ -142,6 +144,18 @@ struct CreateConfigurationView: View {
                     Text("Refresh Interval")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                } footer: {
+                    if !subscriptionManager.subscriptionStatus.isPro {
+                        Button(action: { showingSubscription = true }) {
+                            HStack {
+                                Image(systemName: "crown.fill")
+                                    .font(.caption)
+                                Text("Upgrade to Pro for faster refresh intervals (5 min, 15 min, 30 min, 1 hour)")
+                                    .font(.caption)
+                            }
+                            .foregroundStyle(.yellow)
+                        }
+                    }
                 }
                 
                 Section {
@@ -200,27 +214,44 @@ struct CreateConfigurationView: View {
                 Section {
                     VStack(alignment: .leading, spacing: 16) {
                         Toggle("Show logo", isOn: $config.styling.showsLogo)
+                            .disabled(!subscriptionManager.canUploadLogo)
                         Toggle("Show app name", isOn: $config.styling.showsAppName)
                         
                         if config.styling.showsLogo {
-                            Divider()
-                            
-                            PhotosPicker(selection: $selectedLogoItem, matching: .images) {
-                                Label("Pick logo from Photos", systemImage: "photo")
-                                    .font(.subheadline)
-                            }
-                            
-                            TextField("Logo URL (optional)", text: $config.styling.logoURL)
-                                .textInputAutocapitalization(.never)
-                                .textFieldStyle(.plain)
-                            
-                            if let logoPreview {
-                                logoPreview
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: 48)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .padding(.top, 4)
+                            if subscriptionManager.canUploadLogo {
+                                Divider()
+                                
+                                PhotosPicker(selection: $selectedLogoItem, matching: .images) {
+                                    Label("Pick logo from Photos", systemImage: "photo")
+                                        .font(.subheadline)
+                                }
+                                
+                                TextField("Logo URL (optional)", text: $config.styling.logoURL)
+                                    .textInputAutocapitalization(.never)
+                                    .textFieldStyle(.plain)
+                                
+                                if let logoPreview {
+                                    logoPreview
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: 48)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .padding(.top, 4)
+                                }
+                            } else {
+                                Button(action: { showingSubscription = true }) {
+                                    HStack {
+                                        Image(systemName: "crown.fill")
+                                            .font(.caption)
+                                        Text("Upgrade to Pro to upload custom logos")
+                                            .font(.subheadline)
+                                    }
+                                    .foregroundStyle(.yellow)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.yellow.opacity(0.1))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                }
                             }
                         }
                     }
@@ -229,6 +260,12 @@ struct CreateConfigurationView: View {
                     Text("Logo")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                } footer: {
+                    if !subscriptionManager.canUploadLogo {
+                        Text("Logo customization is a Pro feature")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 
                 Section {
@@ -261,7 +298,12 @@ struct CreateConfigurationView: View {
             }
         }
         .onChange(of: selectedLogoItem) { _, newItem in
-            guard let item = newItem else { return }
+            guard let item = newItem, subscriptionManager.canUploadLogo else {
+                if !subscriptionManager.canUploadLogo {
+                    showingSubscription = true
+                }
+                return
+            }
             Task {
                 if let data = try? await item.loadTransferable(type: Data.self) {
                     config.styling.logoImageData = data
@@ -272,7 +314,25 @@ struct CreateConfigurationView: View {
             }
         }
         .onChange(of: config.styling.logoURL) { _, newURL in
-            downloadLogoFromURL(newURL)
+            if subscriptionManager.canUploadLogo {
+                downloadLogoFromURL(newURL)
+            }
+        }
+        .onChange(of: config.styling.showsLogo) { _, newValue in
+            if newValue && !subscriptionManager.canUploadLogo {
+                // Reset logo if user tries to enable without Pro
+                config.styling.showsLogo = false
+            }
+        }
+        .sheet(isPresented: $showingSubscription) {
+            SubscriptionView()
+        }
+        .task {
+            await subscriptionManager.checkSubscriptionStatus()
+            // Set default refresh interval to minimum allowed for basic users
+            if !subscriptionManager.subscriptionStatus.isPro {
+                config.refreshInterval = .twoHours
+            }
         }
     }
     
@@ -336,20 +396,35 @@ struct CreateConfigurationView: View {
     }
     
     private func saveConfiguration() {
+        // Validate subscription limits before saving
+        var configToSave = config
+        
+        // Remove logo if user doesn't have Pro
+        if !subscriptionManager.canUploadLogo {
+            configToSave.styling.showsLogo = false
+            configToSave.styling.logoURL = ""
+            configToSave.styling.logoImageData = nil
+        }
+        
+        // Ensure refresh interval is allowed
+        if !subscriptionManager.allowedRefreshIntervals.contains(configToSave.refreshInterval) {
+            configToSave.refreshInterval = .twoHours
+        }
+        
         // Ensure logo is downloaded if URL is provided but not yet downloaded
-        if !config.styling.logoURL.isEmpty && config.styling.logoImageData == nil {
+        if !configToSave.styling.logoURL.isEmpty && configToSave.styling.logoImageData == nil {
             Task {
-                await downloadLogoFromURLSync(config.styling.logoURL)
+                await downloadLogoFromURLSync(configToSave.styling.logoURL)
                 await MainActor.run {
-                    ConfigurationManager.shared.saveConfiguration(config)
-                    onSave(config)
+                    ConfigurationManager.shared.saveConfiguration(configToSave)
+                    onSave(configToSave)
                     reloadWidgets()
                     dismiss()
                 }
             }
         } else {
-            ConfigurationManager.shared.saveConfiguration(config)
-            onSave(config)
+            ConfigurationManager.shared.saveConfiguration(configToSave)
+            onSave(configToSave)
             reloadWidgets()
             dismiss()
         }

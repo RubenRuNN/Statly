@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E10D71A2F26E2A800B4BB9B /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E10D7192F26E2A800B4BB9B /* SubscriptionManager.swift */; };
+		5E10D71B2F26E2A800B4BB9B /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E10D7192F26E2A800B4BB9B /* SubscriptionManager.swift */; };
 		5E6475DE2F24E45900EB6D2C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E6475DD2F24E45900EB6D2C /* WidgetKit.framework */; };
 		5E6475E02F24E45900EB6D2C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E6475DF2F24E45900EB6D2C /* SwiftUI.framework */; };
 		5E6475F12F24E45A00EB6D2C /* StatlyWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5E6475DB2F24E45900EB6D2C /* StatlyWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -43,6 +45,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5E10D7192F26E2A800B4BB9B /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		5E10D71C2F26E4D700B4BB9B /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 		5E6475C92F24E3C800EB6D2C /* Statly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Statly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E6475DB2F24E45900EB6D2C /* StatlyWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StatlyWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E6475DD2F24E45900EB6D2C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -68,21 +72,11 @@
 			);
 			target = 5E6475C82F24E3C800EB6D2C /* Statly */;
 		};
-		5EDE08232F26B4360030BDCD /* Exceptions for "Statly" folder in "StatlyWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				statly.icon,
-			);
-			target = 5E6475DA2F24E45900EB6D2C /* StatlyWidgetExtension */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5E6475CB2F24E3C800EB6D2C /* Statly */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				5EDE08232F26B4360030BDCD /* Exceptions for "Statly" folder in "StatlyWidgetExtension" target */,
-			);
 			path = Statly;
 			sourceTree = "<group>";
 		};
@@ -120,6 +114,7 @@
 		5E6475C02F24E3C800EB6D2C = {
 			isa = PBXGroup;
 			children = (
+				5E10D71C2F26E4D700B4BB9B /* Products.storekit */,
 				5E6476022F24E89A00EB6D2C /* StatlyWidgetExtension.entitlements */,
 				5E6475F72F24E49000EB6D2C /* Shared */,
 				5E6475CB2F24E3C800EB6D2C /* Statly */,
@@ -153,6 +148,7 @@
 				5E6475F82F24E4C000EB6D2C /* Models.swift */,
 				5E6475FB2F24E4F400EB6D2C /* APIService.swift */,
 				5E6475FE2F24E50D00EB6D2C /* ConfigurationManager.swift */,
+				5E10D7192F26E2A800B4BB9B /* SubscriptionManager.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -266,6 +262,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E10D71B2F26E2A800B4BB9B /* SubscriptionManager.swift in Sources */,
 				5E6476002F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */,
 				5E6475F92F24E4C000EB6D2C /* Models.swift in Sources */,
 				5E6475FD2F24E4F400EB6D2C /* APIService.swift in Sources */,
@@ -278,6 +275,7 @@
 			files = (
 				5E6475FF2F24E50D00EB6D2C /* ConfigurationManager.swift in Sources */,
 				5E6475FC2F24E4F400EB6D2C /* APIService.swift in Sources */,
+				5E10D71A2F26E2A800B4BB9B /* SubscriptionManager.swift in Sources */,
 				5E6475FA2F24E4C000EB6D2C /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -418,7 +416,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Statly/Statly.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -458,7 +455,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Statly/Statly.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -497,8 +493,6 @@
 		5E6475F42F24E45A00EB6D2C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = StatlyWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -533,8 +527,6 @@
 		5E6475F52F24E45A00EB6D2C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = StatlyWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

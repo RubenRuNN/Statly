@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct StatlyApp: App {
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
+    
     var body: some Scene {
         WindowGroup {
             TabView {
@@ -21,8 +23,16 @@ struct StatlyApp: App {
                     .tabItem {
                         Label("Docs", systemImage: "doc.text")
                     }
+                
+                SubscriptionView()
+                    .tabItem {
+                        Label("Subscription", systemImage: "crown")
+                    }
             }
             .tint(.accentColor)
+            .task {
+                await subscriptionManager.checkSubscriptionStatus()
+            }
         }
     }
 }
