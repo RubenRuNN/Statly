@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		5E10D71A2F26E2A800B4BB9B /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E10D7192F26E2A800B4BB9B /* SubscriptionManager.swift */; };
 		5E10D71B2F26E2A800B4BB9B /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E10D7192F26E2A800B4BB9B /* SubscriptionManager.swift */; };
+		5E10D7832F27B8FF00B4BB9B /* Plans.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 5E10D7822F27B8FF00B4BB9B /* Plans.storekit */; };
+		5E10D7842F27B8FF00B4BB9B /* Plans.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 5E10D7822F27B8FF00B4BB9B /* Plans.storekit */; };
 		5E6475DE2F24E45900EB6D2C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E6475DD2F24E45900EB6D2C /* WidgetKit.framework */; };
 		5E6475E02F24E45900EB6D2C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E6475DF2F24E45900EB6D2C /* SwiftUI.framework */; };
 		5E6475F12F24E45A00EB6D2C /* StatlyWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5E6475DB2F24E45900EB6D2C /* StatlyWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -46,7 +48,7 @@
 
 /* Begin PBXFileReference section */
 		5E10D7192F26E2A800B4BB9B /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
-		5E10D71C2F26E4D700B4BB9B /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
+		5E10D7822F27B8FF00B4BB9B /* Plans.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Plans.storekit; sourceTree = "<group>"; };
 		5E6475C92F24E3C800EB6D2C /* Statly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Statly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E6475DB2F24E45900EB6D2C /* StatlyWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StatlyWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E6475DD2F24E45900EB6D2C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -114,7 +116,7 @@
 		5E6475C02F24E3C800EB6D2C = {
 			isa = PBXGroup;
 			children = (
-				5E10D71C2F26E4D700B4BB9B /* Products.storekit */,
+				5E10D7822F27B8FF00B4BB9B /* Plans.storekit */,
 				5E6476022F24E89A00EB6D2C /* StatlyWidgetExtension.entitlements */,
 				5E6475F72F24E49000EB6D2C /* Shared */,
 				5E6475CB2F24E3C800EB6D2C /* Statly */,
@@ -245,6 +247,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E10D7832F27B8FF00B4BB9B /* Plans.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,6 +255,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E10D7842F27B8FF00B4BB9B /* Plans.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

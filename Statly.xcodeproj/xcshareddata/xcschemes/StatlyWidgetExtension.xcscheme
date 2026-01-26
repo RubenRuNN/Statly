@@ -84,7 +84,7 @@
          </EnvironmentVariable>
       </EnvironmentVariables>
       <StoreKitConfigurationFileReference
-         identifier = "../../Products.storekit">
+         identifier = "../../Plans.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
