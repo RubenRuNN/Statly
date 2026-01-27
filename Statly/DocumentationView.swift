@@ -9,19 +9,31 @@
 import SwiftUI
 
 struct DocumentationView: View {
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    private var isIPadOrMac: Bool {
+        #if os(macOS)
+        return true
+        #else
+        return horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+        #endif
+    }
+    
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: isIPadOrMac ? 32 : 24) {
                     headerView
                     endpointSection
                     responseSection
                     tipsSection
                 }
-                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(isIPadOrMac ? 32 : 16)
             }
             .navigationTitle("Documentation")
         }
+        .navigationViewStyle(.stack)
     }
     
     // MARK: - Header
@@ -86,7 +98,7 @@ app.get("/statly", (req, res) => {
             }
             .padding(.top, 8)
         }
-        .padding(20)
+        .padding(isIPadOrMac ? 24 : 20)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
@@ -161,7 +173,7 @@ app.get("/statly", (req, res) => {
             }
             .padding(.top, 8)
         }
-        .padding(20)
+        .padding(isIPadOrMac ? 24 : 20)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
@@ -185,7 +197,7 @@ app.get("/statly", (req, res) => {
                 TipRow(icon: "square.grid.2x2", text: "Multiple widgets: serve the same endpoint to different widgets with custom styling")
             }
         }
-        .padding(20)
+        .padding(isIPadOrMac ? 24 : 20)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }

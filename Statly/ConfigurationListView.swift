@@ -13,6 +13,15 @@ struct ConfigurationListView: View {
     @State private var showingAddConfig = false
     @State private var showingSubscription = false
     @State private var showingLimitAlert = false
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    private var isIPadOrMac: Bool {
+        #if os(macOS)
+        return true
+        #else
+        return horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+        #endif
+    }
     
     var canCreateWidget: Bool {
         configurations.count < subscriptionManager.maxWidgets
@@ -20,13 +29,14 @@ struct ConfigurationListView: View {
     
     var body: some View {
         NavigationView {
-            ZStack {
+            Group {
                 if configurations.isEmpty {
                     emptyStateView
                 } else {
                     configurationsList
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationTitle("Widgets")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -81,12 +91,13 @@ struct ConfigurationListView: View {
             .task {
                 await subscriptionManager.checkSubscriptionStatus()
             }
+            .navigationViewStyle(.stack)
         }
     }
     
     private var configurationsList: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
+            LazyVStack(spacing: isIPadOrMac ? 16 : 12) {
                 // Widget count indicator
                 if !subscriptionManager.subscriptionStatus.isPro {
                     HStack {
@@ -125,7 +136,7 @@ struct ConfigurationListView: View {
                     }
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, isIPadOrMac ? 24 : 16)
             .padding(.top, 8)
         }
     }

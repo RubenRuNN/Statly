@@ -12,6 +12,15 @@ struct SubscriptionView: View {
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     @State private var product: Product?
     @State private var showingError = false
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    private var isIPadOrMac: Bool {
+        #if os(macOS)
+        return true
+        #else
+        return horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+        #endif
+    }
     
     var body: some View {
         NavigationView {
@@ -23,6 +32,7 @@ struct SubscriptionView: View {
                         paywallView
                     }
                 }
+                .frame(maxWidth: .infinity)
             }
             .navigationTitle("Subscription")
             .navigationBarTitleDisplayMode(.inline)
@@ -39,6 +49,7 @@ struct SubscriptionView: View {
                 }
             }
         }
+        .navigationViewStyle(.stack)
     }
     
     // MARK: - Pro Active View
@@ -116,108 +127,13 @@ struct SubscriptionView: View {
     // MARK: - Paywall View
     
     private var paywallView: some View {
-        VStack(spacing: 0) {
-            // Header
-            VStack(spacing: 12) {
-                Text("Choose Your Plan")
-                    .font(.title)
-                    .fontWeight(.bold)
-                
-                Text("Unlock the full potential of Statly")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.top, 32)
-            .padding(.bottom, 32)
-            
-            // Plan Comparison
-            HStack(spacing: 12) {
-                // Basic Plan
-                PlanCard(
-                    title: "Basic",
-                    subtitle: "Free",
-                    price: "Free",
-                    isRecommended: false,
-                    isPro: false,
-                    features: [
-                        PlanFeature(icon: "checkmark", text: "2 widgets", isAvailable: true),
-                        PlanFeature(icon: "clock", text: "2 hours minimum refresh", isAvailable: true),
-                        PlanFeature(icon: "xmark", text: "No logo customization", isAvailable: false)
-                    ]
-                )
-                
-                // Pro Plan
-                PlanCard(
-                    title: "Pro",
-                    subtitle: "Recommended",
-                    price: product?.displayPrice ?? "$1.99",
-                    pricePeriod: "/month",
-                    isRecommended: true,
-                    isPro: true,
-                    features: [
-                        PlanFeature(icon: "checkmark", text: "Unlimited widgets", isAvailable: true),
-                        PlanFeature(icon: "checkmark", text: "All refresh intervals", isAvailable: true),
-                        PlanFeature(icon: "checkmark", text: "Custom logo upload", isAvailable: true)
-                    ]
-                )
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 32)
-            
-            // CTA Button
-            VStack(spacing: 12) {
-                Button(action: {
-                    Task {
-                        do {
-                            try await subscriptionManager.purchaseSubscription()
-                        } catch {
-                            showingError = true
-                        }
-                    }
-                }) {
-                    HStack {
-                        if subscriptionManager.isLoading {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                        } else {
-                            Image(systemName: "crown.fill")
-                            Text("Upgrade to Pro")
-                                .fontWeight(.semibold)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(
-                        LinearGradient(
-                            colors: [Color.accentColor, Color.accentColor.opacity(0.8)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: Color.accentColor.opacity(0.3), radius: 8, x: 0, y: 4)
-                }
-                .disabled(subscriptionManager.isLoading)
-                
-                Button(action: {
-                    Task {
-                        do {
-                            try await subscriptionManager.restorePurchases()
-                        } catch {
-                            showingError = true
-                        }
-                    }
-                }) {
-                    Text("Restore Purchases")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .disabled(subscriptionManager.isLoading)
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 24)
-        }
+        PaywallContentView(
+            product: product,
+            subscriptionManager: subscriptionManager,
+            showingError: $showingError,
+            horizontalSizeClass: horizontalSizeClass,
+            isIPadOrMac: isIPadOrMac
+        )
     }
 }
 
@@ -337,6 +253,157 @@ struct ProFeatureRow: View {
             Spacer()
         }
         .padding(.vertical, 12)
+    }
+}
+
+// MARK: - Paywall Content View (separated for environment access)
+
+private struct PaywallContentView: View {
+    let product: Product?
+    @ObservedObject var subscriptionManager: SubscriptionManager
+    @Binding var showingError: Bool
+    var horizontalSizeClass: UserInterfaceSizeClass?
+    var isIPadOrMac: Bool
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            VStack(spacing: 12) {
+                Text("Choose Your Plan")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Text("Unlock the full potential of Statly")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.top, 32)
+            .padding(.bottom, 32)
+            
+            // Plan Comparison
+            Group {
+                if isIPadOrMac && horizontalSizeClass == .regular {
+                    HStack(spacing: 20) {
+                        // Basic Plan
+                        PlanCard(
+                            title: "Basic",
+                            subtitle: "Free",
+                            price: "Free",
+                            isRecommended: false,
+                            isPro: false,
+                            features: [
+                                PlanFeature(icon: "checkmark", text: "2 widgets", isAvailable: true),
+                                PlanFeature(icon: "clock", text: "2 hours minimum refresh", isAvailable: true),
+                                PlanFeature(icon: "xmark", text: "No logo customization", isAvailable: false)
+                            ]
+                        )
+                        
+                        // Pro Plan
+                        PlanCard(
+                            title: "Pro",
+                            subtitle: "Recommended",
+                            price: product?.displayPrice ?? "$1.99",
+                            pricePeriod: "/month",
+                            isRecommended: true,
+                            isPro: true,
+                            features: [
+                                PlanFeature(icon: "checkmark", text: "Unlimited widgets", isAvailable: true),
+                                PlanFeature(icon: "checkmark", text: "All refresh intervals", isAvailable: true),
+                                PlanFeature(icon: "checkmark", text: "Custom logo upload", isAvailable: true)
+                            ]
+                        )
+                    }
+                } else {
+                    HStack(spacing: 12) {
+                        // Basic Plan
+                        PlanCard(
+                            title: "Basic",
+                            subtitle: "Free",
+                            price: "Free",
+                            isRecommended: false,
+                            isPro: false,
+                            features: [
+                                PlanFeature(icon: "checkmark", text: "2 widgets", isAvailable: true),
+                                PlanFeature(icon: "clock", text: "2 hours minimum refresh", isAvailable: true),
+                                PlanFeature(icon: "xmark", text: "No logo customization", isAvailable: false)
+                            ]
+                        )
+                        
+                        // Pro Plan
+                        PlanCard(
+                            title: "Pro",
+                            subtitle: "Recommended",
+                            price: product?.displayPrice ?? "$1.99",
+                            pricePeriod: "/month",
+                            isRecommended: true,
+                            isPro: true,
+                            features: [
+                                PlanFeature(icon: "checkmark", text: "Unlimited widgets", isAvailable: true),
+                                PlanFeature(icon: "checkmark", text: "All refresh intervals", isAvailable: true),
+                                PlanFeature(icon: "checkmark", text: "Custom logo upload", isAvailable: true)
+                            ]
+                        )
+                    }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 32)
+            
+            // CTA Button
+            VStack(spacing: 12) {
+                Button(action: {
+                    Task {
+                        do {
+                            try await subscriptionManager.purchaseSubscription()
+                        } catch {
+                            showingError = true
+                        }
+                    }
+                }) {
+                    HStack {
+                        if subscriptionManager.isLoading {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        } else {
+                            Image(systemName: "crown.fill")
+                            Text("Upgrade to Pro")
+                                .fontWeight(.semibold)
+                        }
+                    }
+                    .frame(maxWidth: isIPadOrMac ? 400 : .infinity)
+                    .frame(height: 56)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.accentColor, Color.accentColor.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .foregroundColor(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: Color.accentColor.opacity(0.3), radius: 8, x: 0, y: 4)
+                }
+                .disabled(subscriptionManager.isLoading)
+                .frame(maxWidth: .infinity)
+                
+                Button(action: {
+                    Task {
+                        do {
+                            try await subscriptionManager.restorePurchases()
+                        } catch {
+                            showingError = true
+                        }
+                    }
+                }) {
+                    Text("Restore Purchases")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .disabled(subscriptionManager.isLoading)
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 24)
+        }
     }
 }
 

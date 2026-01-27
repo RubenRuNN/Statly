@@ -20,6 +20,19 @@ struct EditConfigurationView: View {
     @State private var selectedLogoItem: PhotosPickerItem?
     @State private var logoPreview: Image?
     @State private var showingSubscription = false
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    private var isIPadOrMac: Bool {
+        #if os(macOS)
+        return true
+        #else
+        return horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+        #endif
+    }
+    
+    private var maxContentWidth: CGFloat {
+        isIPadOrMac ? 800 : .infinity
+    }
     
     private var sampleStats: [Stat] {
         [
@@ -34,7 +47,9 @@ struct EditConfigurationView: View {
     }
     
     var body: some View {
-        Form {
+        HStack {
+            Spacer()
+            Form {
             Section {
                 VStack(alignment: .leading, spacing: 12) {
                     TextField("Widget Name", text: $config.name)
@@ -266,6 +281,9 @@ struct EditConfigurationView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+            }
+            .frame(maxWidth: maxContentWidth)
+            Spacer()
         }
         .navigationTitle("Edit Widget")
         .navigationBarTitleDisplayMode(.inline)

@@ -21,6 +21,19 @@ struct CreateConfigurationView: View {
     @State private var logoPreview: Image?
     @State private var availableStats: [Stat] = []
     @State private var showingSubscription = false
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    private var isIPadOrMac: Bool {
+        #if os(macOS)
+        return true
+        #else
+        return horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+        #endif
+    }
+    
+    private var maxContentWidth: CGFloat {
+        isIPadOrMac ? 800 : .infinity
+    }
     
     let onSave: (StatlyWidgetConfiguration) -> Void
     
@@ -34,7 +47,9 @@ struct CreateConfigurationView: View {
     
     var body: some View {
         NavigationView {
-            Form {
+            HStack {
+                Spacer()
+                Form {
                 Section {
                     VStack(alignment: .leading, spacing: 12) {
                         TextField("Widget Name", text: $config.name)
@@ -279,6 +294,9 @@ struct CreateConfigurationView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
+                }
+                .frame(maxWidth: maxContentWidth)
+                Spacer()
             }
             .navigationTitle("New Widget")
             .navigationBarTitleDisplayMode(.inline)
