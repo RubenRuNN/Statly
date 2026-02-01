@@ -8,10 +8,18 @@
 import SwiftUI
 import StoreKit
 
+private enum LegalURL {
+    static let terms = URL(string: "https://www.checkstatly.app/terms")!
+    static let privacy = URL(string: "https://www.checkstatly.app/privacy")!
+    static let manageSubscriptions = URL(string: "https://apps.apple.com/account/subscriptions")!
+}
+
 struct SubscriptionView: View {
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     @State private var product: Product?
     @State private var showingError = false
+    @State private var restoreAlertMessage: String?
+    @State private var showingRestoreAlert = false
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     private var isIPadOrMac: Bool {
@@ -40,6 +48,11 @@ struct SubscriptionView: View {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text(subscriptionManager.errorMessage ?? "An error occurred. Please try again.")
+            }
+            .alert("Restore Purchases", isPresented: $showingRestoreAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(restoreAlertMessage ?? "")
             }
             .task {
                 do {
@@ -119,6 +132,36 @@ struct SubscriptionView: View {
             }
             .padding(.horizontal)
             
+            // Manage / Cancel subscription (required for App Store)
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Manage Subscription")
+                    .font(.headline)
+                
+                Link(destination: LegalURL.manageSubscriptions) {
+                    HStack {
+                        Image(systemName: "gearshape.fill")
+                        Text("Open Subscription Settings")
+                    }
+                    .font(.subheadline)
+                }
+                
+                Text("To cancel your subscription, open Settings → Apple ID → Subscriptions and select Statly.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                HStack(spacing: 16) {
+                    Link("Terms of Use (EULA)", destination: LegalURL.terms)
+                    Link("Privacy Policy", destination: LegalURL.privacy)
+                }
+                .font(.caption)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(Color(.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.horizontal)
+            .padding(.top, 8)
+            
             Spacer()
         }
         .padding(.bottom, 32)
@@ -131,6 +174,8 @@ struct SubscriptionView: View {
             product: product,
             subscriptionManager: subscriptionManager,
             showingError: $showingError,
+            showingRestoreAlert: $showingRestoreAlert,
+            restoreAlertMessage: $restoreAlertMessage,
             horizontalSizeClass: horizontalSizeClass,
             isIPadOrMac: isIPadOrMac
         )
@@ -262,6 +307,8 @@ private struct PaywallContentView: View {
     let product: Product?
     @ObservedObject var subscriptionManager: SubscriptionManager
     @Binding var showingError: Bool
+    @Binding var showingRestoreAlert: Bool
+    @Binding var restoreAlertMessage: String?
     var horizontalSizeClass: UserInterfaceSizeClass?
     var isIPadOrMac: Bool
     
@@ -390,6 +437,10 @@ private struct PaywallContentView: View {
                     Task {
                         do {
                             try await subscriptionManager.restorePurchases()
+                            restoreAlertMessage = subscriptionManager.subscriptionStatus.isPro
+                                ? "Your subscription has been restored."
+                                : "No previous purchases found for this Apple ID."
+                            showingRestoreAlert = true
                         } catch {
                             showingError = true
                         }
@@ -401,6 +452,27 @@ private struct PaywallContentView: View {
                 }
                 .disabled(subscriptionManager.isLoading)
             }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+            
+            // Legal copy + required links
+            VStack(alignment: .leading, spacing: 4) {
+                if let displayPrice = product?.displayPrice {
+                    Text("Statly Pro is a monthly, auto-renewing subscription billed at \(displayPrice) per month to your Apple ID account.")
+                } else {
+                    Text("Statly Pro is a monthly, auto-renewing subscription billed to your Apple ID account.")
+                }
+                
+                Text("Your subscription automatically renews unless cancelled at least 24 hours before the end of the current period. You can manage or cancel your subscription in Settings > Apple ID > Subscriptions.")
+                
+                HStack(spacing: 16) {
+                    Link("Terms of Use (EULA)", destination: LegalURL.terms)
+                    Link("Privacy Policy", destination: LegalURL.privacy)
+                }
+            }
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.leading)
             .padding(.horizontal)
             .padding(.bottom, 24)
         }
