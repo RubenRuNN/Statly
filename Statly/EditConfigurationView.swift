@@ -176,44 +176,6 @@ struct EditConfigurationView: View {
             }
             
             Section {
-                VStack(spacing: 12) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Horizontal Padding")
-                                .font(.subheadline)
-                            Spacer()
-                            Text("\(Int(config.styling.horizontalPadding)) pt")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                        Slider(value: $config.styling.horizontalPadding, in: 8...32, step: 2)
-                    }
-                    
-                    Divider()
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Vertical Padding")
-                                .font(.subheadline)
-                            Spacer()
-                            Text("\(Int(config.styling.verticalPadding)) pt")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                        Slider(value: $config.styling.verticalPadding, in: 4...20, step: 2)
-                    }
-                }
-                .padding(.vertical, 4)
-            } header: {
-                Text("Padding")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            } footer: {
-                Text("Adjust the spacing around widget content")
-                    .font(.caption)
-            }
-            
-            Section {
                 VStack(alignment: .leading, spacing: 16) {
                     Toggle("Show logo", isOn: $config.styling.showsLogo)
                         .disabled(!subscriptionManager.canUploadLogo)
@@ -325,9 +287,11 @@ struct EditConfigurationView: View {
             }
             Task {
                 if let data = try? await item.loadTransferable(type: Data.self) {
-                    config.styling.logoImageData = data
-                    if let uiImage = UIImage(data: data) {
-                        logoPreview = Image(uiImage: uiImage)
+                    await MainActor.run {
+                        config.styling.logoImageData = data
+                        if let uiImage = UIImage(data: data) {
+                            logoPreview = Image(uiImage: uiImage)
+                        }
                     }
                 }
             }

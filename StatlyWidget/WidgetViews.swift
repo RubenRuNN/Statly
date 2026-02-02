@@ -32,6 +32,10 @@ private func updatedTimeText(from updatedAt: String?) -> String? {
     return "Updated at \(time)"
 }
 
+// Fixed padding for all widget content (no longer user-configurable).
+private let widgetHorizontalPadding: CGFloat = 16
+private let widgetVerticalPadding: CGFloat = 12
+
 // MARK: - Widget Header
 struct WidgetHeader: View {
     let config: StatlyWidgetConfiguration
@@ -104,8 +108,8 @@ struct WidgetHeader: View {
             
             Spacer()
         }
-        .padding(.horizontal, compact ? config.styling.horizontalPadding * 0.75 : config.styling.horizontalPadding)
-        .padding(.vertical, compact ? config.styling.verticalPadding * 0.8 : config.styling.verticalPadding)
+        .padding(.horizontal, compact ? widgetHorizontalPadding * 0.75 : widgetHorizontalPadding)
+        .padding(.vertical, compact ? widgetVerticalPadding * 0.8 : widgetVerticalPadding)
     }
 }
 
@@ -182,7 +186,7 @@ struct SmallWidgetView: View {
                 // Show first selected stat, or first stat if none selected
                 if let firstStat = displayStats.first {
                     StatItemView(stat: firstStat, config: config, compact: false)
-                        .padding(.horizontal, config.styling.horizontalPadding)
+                        .padding(.horizontal, widgetHorizontalPadding)
                 }
 
                 Spacer(minLength: 4)
@@ -192,7 +196,7 @@ struct SmallWidgetView: View {
                         .font(.caption2)
                         .foregroundColor(Color(hex: config.styling.primaryTextColor))
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.bottom, config.styling.verticalPadding * 0.75)
+                        .padding(.bottom, widgetVerticalPadding * 0.75)
                 }
             }
         }
@@ -230,7 +234,7 @@ struct MediumWidgetView: View {
                         }
                     }
                 }
-                .padding(.horizontal, config.styling.horizontalPadding)
+                .padding(.horizontal, widgetHorizontalPadding)
                 
                 Spacer(minLength: 4)
                 
@@ -239,8 +243,8 @@ struct MediumWidgetView: View {
                         .font(.caption2)
                         .foregroundColor(Color(hex: config.styling.primaryTextColor))
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                        .padding(.horizontal, config.styling.horizontalPadding)
-                        .padding(.bottom, config.styling.verticalPadding * 0.75)
+                        .padding(.horizontal, widgetHorizontalPadding)
+                        .padding(.bottom, widgetVerticalPadding * 0.75)
                 }
             }
         }
@@ -289,7 +293,7 @@ struct LargeWidgetView: View {
                         }
                     }
                 }
-                .padding(.horizontal, config.styling.horizontalPadding)
+                .padding(.horizontal, widgetHorizontalPadding)
                 
                 Spacer(minLength: 4)
                 
@@ -298,8 +302,8 @@ struct LargeWidgetView: View {
                         .font(.caption2)
                         .foregroundColor(Color(hex: config.styling.primaryTextColor))
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                        .padding(.horizontal, config.styling.horizontalPadding)
-                        .padding(.bottom, config.styling.verticalPadding)
+                        .padding(.horizontal, widgetHorizontalPadding)
+                        .padding(.bottom, widgetVerticalPadding)
                 }
             }
         }

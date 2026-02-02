@@ -127,8 +127,6 @@ struct WidgetStyling: Codable {
     var showsLogo: Bool
     var showsAppName: Bool
     var logoImageData: Data?
-    var horizontalPadding: Double
-    var verticalPadding: Double
     
     init(
         backgroundColor: String = "#161a1d",
@@ -141,9 +139,7 @@ struct WidgetStyling: Codable {
         appName: String = "My App",
         showsLogo: Bool = false,
         showsAppName: Bool = true,
-        logoImageData: Data? = nil,
-        horizontalPadding: Double = 16,
-        verticalPadding: Double = 8
+        logoImageData: Data? = nil
     ) {
         self.backgroundColor = backgroundColor
         self.primaryTextColor = primaryTextColor
@@ -156,8 +152,6 @@ struct WidgetStyling: Codable {
         self.showsLogo = showsLogo
         self.showsAppName = showsAppName
         self.logoImageData = logoImageData
-        self.horizontalPadding = horizontalPadding
-        self.verticalPadding = verticalPadding
     }
 }
 

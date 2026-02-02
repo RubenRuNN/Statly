@@ -189,44 +189,6 @@ struct CreateConfigurationView: View {
                 }
                 
                 Section {
-                    VStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Horizontal Padding")
-                                    .font(.subheadline)
-                                Spacer()
-                                Text("\(Int(config.styling.horizontalPadding)) pt")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Slider(value: $config.styling.horizontalPadding, in: 8...32, step: 2)
-                        }
-                        
-                        Divider()
-                        
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Vertical Padding")
-                                    .font(.subheadline)
-                                Spacer()
-                                Text("\(Int(config.styling.verticalPadding)) pt")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Slider(value: $config.styling.verticalPadding, in: 4...20, step: 2)
-                        }
-                    }
-                    .padding(.vertical, 4)
-                } header: {
-                    Text("Padding")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                } footer: {
-                    Text("Adjust the spacing around widget content")
-                        .font(.caption)
-                }
-                
-                Section {
                     VStack(alignment: .leading, spacing: 16) {
                         Toggle("Show logo", isOn: $config.styling.showsLogo)
                             .disabled(!subscriptionManager.canUploadLogo)
@@ -324,9 +286,11 @@ struct CreateConfigurationView: View {
             }
             Task {
                 if let data = try? await item.loadTransferable(type: Data.self) {
-                    config.styling.logoImageData = data
-                    if let uiImage = UIImage(data: data) {
-                        logoPreview = Image(uiImage: uiImage)
+                    await MainActor.run {
+                        config.styling.logoImageData = data
+                        if let uiImage = UIImage(data: data) {
+                            logoPreview = Image(uiImage: uiImage)
+                        }
                     }
                 }
             }
@@ -488,63 +452,140 @@ struct ColorPickerRow: View {
 }
 
 // MARK: - Widget Preview
+
+/// ISO8601 string format matching WidgetViews.statlyISOFormatter so "Updated at HH:mm" parses correctly.
+private let previewISO8601Formatter: ISO8601DateFormatter = {
+    let f = ISO8601DateFormatter()
+    f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    return f
+}()
+
+/// iOS widget family sizes in points (matches system widget dimensions).
+private enum WidgetPreviewFamily: Int, CaseIterable {
+    case small  // 2×2
+    case medium // 4×2
+    case large  // 4×4
+
+    var label: String {
+        switch self {
+        case .small: return "Small"
+        case .medium: return "Medium"
+        case .large: return "Large"
+        }
+    }
+
+    var width: CGFloat {
+        switch self {
+        case .small: return 158
+        case .medium: return 329
+        case .large: return 329
+        }
+    }
+
+    var height: CGFloat {
+        switch self {
+        case .small: return 158
+        case .medium: return 155
+        case .large: return 345
+        }
+    }
+
+    /// Corner radius used by iOS for widget chrome (~22pt).
+    static let cornerRadius: CGFloat = 22
+
+    /// Content margins iOS applies to widget content (iOS 17+). Preview uses this so padding matches the real widget.
+    static let contentMargin: CGFloat = 16
+}
+
 struct WidgetPreviewView: View {
     let config: StatlyWidgetConfiguration
     let stats: [Stat]
-    
+
+    @State private var selectedFamily: WidgetPreviewFamily = .small
+
+    /// Identity that changes when any visual styling changes so the preview updates in real time.
+    private var previewContentId: String {
+        let s = config.styling
+        return [
+            s.backgroundColor,
+            s.primaryTextColor,
+            s.valueTextColor,
+            s.appName,
+            String(s.showsLogo),
+            String(s.showsAppName),
+            String(s.logoImageData?.count ?? 0)
+        ].joined(separator: "|")
+    }
+
     private var statsResponse: StatsResponse {
         StatsResponse(
             stats: stats,
-            updatedAt: Date().ISO8601Format()
+            updatedAt: previewISO8601Formatter.string(from: Date())
         )
     }
-    
-    private var displayStats: [Stat] {
-        config.getSelectedStats(from: stats)
-    }
-    
-    // iOS widget dimensions (approximate)
-    private let widgetSize: CGFloat = 155 // Small widget is ~155x155 points
-    
+
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("Small Widget Preview")
+                Text("Swipe to see other sizes")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                
                 Spacer()
-                
-                if !config.selectedStatIndices.isEmpty {
-                    Text("\(config.selectedStatIndices.count) selected")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
+                Text(selectedFamily.label)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+            }
+
+            TabView(selection: $selectedFamily) {
+                ForEach(WidgetPreviewFamily.allCases, id: \.rawValue) { family in
+                    widgetPreviewCard(family: family)
+                        .tag(family)
                 }
             }
-            
-            // Exact widget preview matching iOS widget appearance
+            .tabViewStyle(.page(indexDisplayMode: .automatic))
+            .frame(height: WidgetPreviewFamily.large.height + 56)
+        }
+    }
+
+    /// Same layout as StatlyWidgetEntryView: same views (Small/Medium/LargeWidgetView),
+    /// same config (margins, paddings, fonts from WidgetViews), same dimensions.
+    @ViewBuilder
+    private func widgetPreviewCard(family: WidgetPreviewFamily) -> some View {
+        VStack(spacing: 8) {
+            Text(family.label)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+
+            // Exact replica of iOS widget: same background + content as StatlyWidgetEntryView.
+            // Apply same content margins iOS uses so padding matches the real widget (iOS 17+).
+            let shape = RoundedRectangle(cornerRadius: WidgetPreviewFamily.cornerRadius)
+            let margin = WidgetPreviewFamily.contentMargin
             ZStack {
-                // Background color - must match widget's containerBackground
                 Color(hex: config.styling.backgroundColor)
                     .ignoresSafeArea()
-                
-                // Actual widget view content
-                SmallWidgetView(
-                    config: config,
-                    stats: StatsResponse(
-                        stats: displayStats.isEmpty ? stats : displayStats,
-                        updatedAt: statsResponse.updatedAt
-                    ),
-                    date: Date()
-                )
+
+                widgetContent(for: family)
+                    .padding(margin)
             }
-            .frame(width: widgetSize, height: widgetSize)
-            .clipShape(RoundedRectangle(cornerRadius: 22)) // iOS widget corner radius (~22pt for small)
-            .overlay(
-                // Subtle border to show widget boundaries in preview
-                RoundedRectangle(cornerRadius: 22)
-                    .stroke(Color.gray.opacity(0.1), lineWidth: 0.5)
-            )
+            .id(previewContentId)
+            .frame(width: family.width, height: family.height)
+            .clipShape(shape)
+            .overlay(shape.stroke(Color.gray.opacity(0.15), lineWidth: 0.5))
+        }
+        .padding(.vertical, 8)
+    }
+
+    @ViewBuilder
+    private func widgetContent(for family: WidgetPreviewFamily) -> some View {
+        let response = statsResponse
+        switch family {
+        case .small:
+            SmallWidgetView(config: config, stats: response, date: Date())
+        case .medium:
+            MediumWidgetView(config: config, stats: response, date: Date())
+        case .large:
+            LargeWidgetView(config: config, stats: response, date: Date())
         }
     }
 }
